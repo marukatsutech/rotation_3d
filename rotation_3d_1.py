@@ -1,4 +1,4 @@
-""" Rotation in 3d """
+""" Three-axis rotation """
 import numpy as np
 from matplotlib.figure import Figure
 import matplotlib.animation as animation
@@ -21,11 +21,11 @@ vector_y_axis = np.array([0., 1., 0.])
 vector_z_axis = np.array([0., 0., 1.])
 
 """ Other parameters """
-theta_init_deg, phi_init_deg = 0., 0.
-rot_velocity_roll, rot_velocity_pitch, rot_velocity_yaw = 1., 1., 1.
+theta_init_deg, phi_init_deg = 90., 0.
+rot_velocity_a, rot_velocity_b, rot_velocity_c = 1., 1., 1.
 
 """ Create figure and axes """
-title_ax0 = "Rotation in 3D"
+title_ax0 = "Three-axis rotation"
 title_tk = title_ax0
 
 x_min = -2.
@@ -57,7 +57,11 @@ toolbar = NavigationToolbar2Tk(canvas, root)
 canvas.get_tk_widget().pack()
 
 """ Global objects of Tkinter """
+var_axis_op = tk.IntVar()
 var_turn_op = tk.IntVar()
+var_theta = tk.StringVar(root)
+var_phi = tk.StringVar(root)
+
 
 """ Classes and functions """
 
@@ -105,13 +109,17 @@ def spherical_to_cartesian(r, theta, phi):
     return x, y, z
 
 
-class TriArrow:
+class ThreeArrow:
     def __init__(self, ax=None, xyz=None, direction=None):
         self.ax = ax
         self.xyz = xyz
         self.direction = direction
         # self.size = size
         # self.color = color
+
+        # self.roll_axis_init = np.array([1., 0., 0.])
+        # self.pitch_axis_init = np.array([0., 1., 0.])
+        # self.yaw_axis_init = np.array([0., 0., 1.])
 
         self.roll_axis = np.array([1., 0., 0.])
         self.pitch_axis = np.array([0., 1., 0.])
@@ -135,7 +143,7 @@ class TriArrow:
         self.path_roll_axis, = self.ax.plot(np.array(self.x_path_roll_axis),
                                             np.array(self.y_path_roll_axis),
                                             np.array(self.z_path_roll_axis),
-                                            color="red", linewidth=1)
+                                            color="red", linewidth=1, label="Roll axis")
 
         self.x_path_pitch_axis = []
         self.y_path_pitch_axis = []
@@ -143,7 +151,7 @@ class TriArrow:
         self.path_pitch_axis, = self.ax.plot(np.array(self.x_path_pitch_axis),
                                              np.array(self.y_path_pitch_axis),
                                              np.array(self.z_path_pitch_axis),
-                                             color="blue", linewidth=1)
+                                             color="blue", linewidth=1, label="Pitch axis")
 
         self.x_path_yaw_axis = []
         self.y_path_yaw_axis = []
@@ -151,7 +159,16 @@ class TriArrow:
         self.path_yaw_axis, = self.ax.plot(np.array(self.x_path_yaw_axis),
                                            np.array(self.y_path_yaw_axis),
                                            np.array(self.z_path_yaw_axis),
-                                           color="green", linewidth=1)
+                                           color="green", linewidth=1, label="Yaw axis")
+
+        self.r_roll_axis, self.theta_roll_axis, self.phi_roll_axis = cartesian_to_spherical(
+            self.roll_axis[0], self.roll_axis[1], self.roll_axis[2])
+        self.r_pitch_axis, self.theta_pitch_axis, self.phi_pitch_axis = cartesian_to_spherical(
+            self.pitch_axis[0], self.pitch_axis[1], self.pitch_axis[2])
+        self.r_yaw_axis, self.theta_yaw_axis, self.phi_yaw_axis = cartesian_to_spherical(
+            self.yaw_axis[0], self.yaw_axis[1], self.yaw_axis[2])
+
+        print("row", self.theta_roll_axis, self.phi_roll_axis)
 
     def roll(self, angle):
         self.roll_axis = self.roll_axis / np.linalg.norm(self.roll_axis)
@@ -180,11 +197,45 @@ class TriArrow:
         self._update_quiver()
         self._update_path()
 
+    def rot_x(self, angle):
+        rot_matrix = Rotation.from_rotvec(angle * vector_x_axis)
+        self.roll_axis = rot_matrix.apply(self.roll_axis)
+        self.pitch_axis = rot_matrix.apply(self.pitch_axis)
+        self.yaw_axis = rot_matrix.apply(self.yaw_axis)
+
+        self._update_quiver()
+        self._update_path()
+
+    def rot_y(self, angle):
+        rot_matrix = Rotation.from_rotvec(angle * vector_y_axis)
+        self.roll_axis = rot_matrix.apply(self.roll_axis)
+        self.pitch_axis = rot_matrix.apply(self.pitch_axis)
+        self.yaw_axis = rot_matrix.apply(self.yaw_axis)
+
+        self._update_quiver()
+        self._update_path()
+
+    def rot_z(self, angle):
+        rot_matrix = Rotation.from_rotvec(angle * vector_z_axis)
+        self.roll_axis = rot_matrix.apply(self.roll_axis)
+        self.pitch_axis = rot_matrix.apply(self.pitch_axis)
+        self.yaw_axis = rot_matrix.apply(self.yaw_axis)
+
+        self._update_quiver()
+        self._update_path()
+
     def reset(self):
         self.xyz = np.array([0., 0., 0.])
         self.roll_axis = np.array([1., 0., 0.])
         self.pitch_axis = np.array([0., 1., 0.])
         self.yaw_axis = np.array([0., 0., 1.])
+
+        self.r_roll_axis, self.theta_roll_axis, self.phi_roll_axis = cartesian_to_spherical(
+            self.roll_axis[0], self.roll_axis[1], self.roll_axis[2])
+        self.r_pitch_axis, self.theta_pitch_axis, self.phi_pitch_axis = cartesian_to_spherical(
+            self.pitch_axis[0], self.pitch_axis[1], self.pitch_axis[2])
+        self.r_yaw_axis, self.theta_yaw_axis, self.phi_yaw_axis = cartesian_to_spherical(
+            self.yaw_axis[0], self.yaw_axis[1], self.yaw_axis[2])
 
         self.x_path_roll_axis = []
         self.y_path_roll_axis = []
@@ -237,6 +288,60 @@ class TriArrow:
         self.path_yaw_axis.set_ydata(np.array(self.y_path_yaw_axis))
         self.path_yaw_axis.set_3d_properties(np.array(self.z_path_yaw_axis))
 
+    def set_theta_initial(self, theta):
+        self.theta_roll_axis = theta
+        self.theta_yaw_axis = theta - np.pi / 2.
+
+        self.roll_axis[0], self.roll_axis[1], self.roll_axis[2] = (
+            spherical_to_cartesian(self.r_roll_axis, self.theta_roll_axis, self.phi_roll_axis))
+        self.yaw_axis[0], self.yaw_axis[1], self.yaw_axis[2] = (
+            spherical_to_cartesian(self.r_yaw_axis, self.theta_yaw_axis, self.phi_yaw_axis))
+
+        self.pitch_axis = - np.cross(self.roll_axis, self.yaw_axis)
+
+        self._update_quiver()
+
+        self.x_path_roll_axis = []
+        self.y_path_roll_axis = []
+        self.z_path_roll_axis = []
+
+        self.x_path_pitch_axis = []
+        self.y_path_pitch_axis = []
+        self.z_path_pitch_axis = []
+
+        self.x_path_yaw_axis = []
+        self.y_path_yaw_axis = []
+        self.z_path_yaw_axis = []
+
+        self._update_path()
+
+    def set_phi_initial(self, phi):
+        self.phi_roll_axis = phi
+        self.phi_yaw_axis = phi
+
+        self.roll_axis[0], self.roll_axis[1], self.roll_axis[2] = (
+            spherical_to_cartesian(self.r_roll_axis, self.theta_roll_axis, self.phi_roll_axis))
+        self.yaw_axis[0], self.yaw_axis[1], self.yaw_axis[2] = (
+            spherical_to_cartesian(self.r_yaw_axis, self.theta_yaw_axis, self.phi_yaw_axis))
+
+        self.pitch_axis = - np.cross(self.roll_axis, self.yaw_axis)
+
+        self._update_quiver()
+
+        self.x_path_roll_axis = []
+        self.y_path_roll_axis = []
+        self.z_path_roll_axis = []
+
+        self.x_path_pitch_axis = []
+        self.y_path_pitch_axis = []
+        self.z_path_pitch_axis = []
+
+        self.x_path_yaw_axis = []
+        self.y_path_yaw_axis = []
+        self.z_path_yaw_axis = []
+
+        self._update_path()
+
 
 def create_center_lines():
     line_axis_x = art3d.Line3D([0., 0.], [0., 0.], [z_min, z_max], color="gray", ls="-.", linewidth=1)
@@ -257,53 +362,97 @@ def create_animation_control():
 
 
 def set_v_roll(velocity):
-    global rot_velocity_roll
-    rot_velocity_roll = velocity
+    global rot_velocity_a
+    rot_velocity_a = velocity
 
 
 def set_v_pitch(velocity):
-    global rot_velocity_pitch
-    rot_velocity_pitch = velocity
+    global rot_velocity_b
+    rot_velocity_b = velocity
 
 
 def set_v_yaw(velocity):
-    global rot_velocity_yaw
-    rot_velocity_yaw = velocity
+    global rot_velocity_c
+    rot_velocity_c = velocity
+
+
+def set_theta_initial(theta):
+    three_arrow.set_theta_initial(np.deg2rad(theta))
+
+
+def set_phi_initial(phi):
+    three_arrow.set_phi_initial(np.deg2rad(phi))
 
 
 def create_parameter_setter():
-    global var_turn_op
+    global var_axis_op, var_turn_op, var_theta, var_phi
+    frm_dir = ttk.Labelframe(root, relief="ridge", text="Initial direction", labelanchor='n')
+    frm_dir.pack(side='left', fill=tk.Y)
+
+    lbl_theta = tk.Label(frm_dir, text="Theta")
+    lbl_theta.pack(side="left")
+
+    # var_theta = tk.StringVar(root)
+    var_theta.set(str(theta_init_deg))
+    spn_theta = tk.Spinbox(
+        frm_dir, textvariable=var_theta, format="%.0f", from_=-360, to=360, increment=1,
+        command=lambda: set_theta_initial(float(var_theta.get())), width=5
+    )
+    spn_theta.pack(side="left")
+
+    lbl_phi = tk.Label(frm_dir, text="Phi")
+    lbl_phi.pack(side="left")
+
+    # var_phi = tk.StringVar(root)
+    var_phi.set(str(phi_init_deg))
+    spn_phi = tk.Spinbox(
+        frm_dir, textvariable=var_phi, format="%.0f", from_=-360, to=360, increment=1,
+        command=lambda: set_phi_initial(float(var_phi.get())), width=5
+    )
+    spn_phi.pack(side="left")
+
+    frm_axis = ttk.Labelframe(root, relief="ridge", text="Rotation axis", labelanchor='n')
+    frm_axis.pack(side='left', fill=tk.Y)
+
+    # var_axis_op = tk.IntVar()
+    rd_op_axis_rpy = tk.Radiobutton(frm_axis, text="Roll,Pitch,Yaw", value=1, variable=var_axis_op)
+    rd_op_axis_rpy.pack(side='left')
+
+    rd_op_axis_xyz = tk.Radiobutton(frm_axis, text="x,y,z", value=2, variable=var_axis_op)
+    rd_op_axis_xyz.pack(side='left')
+
+    var_axis_op.set(1)
 
     frm_v = ttk.Labelframe(root, relief="ridge", text="Rotation velocity", labelanchor='n')
     frm_v.pack(side='left', fill=tk.Y)
 
-    lbl_vr = tk.Label(frm_v, text="Roll axis")
+    lbl_vr = tk.Label(frm_v, text="A(Roll,x) axis")
     lbl_vr.pack(side="left")
 
     var_vr = tk.StringVar(root)
-    var_vr.set(str(rot_velocity_roll))
+    var_vr.set(str(rot_velocity_a))
     spn_vr = tk.Spinbox(
         frm_v, textvariable=var_vr, format="%.0f", from_=-10, to=10, increment=1,
         command=lambda: set_v_roll(float(var_vr.get())), width=5
     )
     spn_vr.pack(side="left")
 
-    lbl_vp = tk.Label(frm_v, text="Pitch axis")
+    lbl_vp = tk.Label(frm_v, text="B(Pitch,y) axis")
     lbl_vp.pack(side="left")
 
     var_vp = tk.StringVar(root)
-    var_vp.set(str(rot_velocity_pitch))
+    var_vp.set(str(rot_velocity_b))
     spn_vp = tk.Spinbox(
         frm_v, textvariable=var_vp, format="%.0f", from_=-10, to=10, increment=1,
         command=lambda: set_v_pitch(float(var_vp.get())), width=5
     )
     spn_vp.pack(side="left")
 
-    lbl_vy = tk.Label(frm_v, text="Yaw axis")
+    lbl_vy = tk.Label(frm_v, text="C(Yaw,z) axis")
     lbl_vy.pack(side="left")
 
     var_vy = tk.StringVar(root)
-    var_vy.set(str(rot_velocity_yaw))
+    var_vy.set(str(rot_velocity_c))
     spn_vy = tk.Spinbox(
         frm_v, textvariable=var_vy, format="%.0f", from_=-10, to=10, increment=1,
         command=lambda: set_v_yaw(float(var_vy.get())), width=5
@@ -313,11 +462,11 @@ def create_parameter_setter():
     frm_turn = ttk.Labelframe(root, relief="ridge", text="Turn of rotation", labelanchor='n')
     frm_turn.pack(side='left', fill=tk.Y)
 
-    var_turn_op = tk.IntVar()
-    rd_op_rpy = tk.Radiobutton(frm_turn, text="Roll->Pitch->Yaw", value=1, variable=var_turn_op)
+    # var_turn_op = tk.IntVar()
+    rd_op_rpy = tk.Radiobutton(frm_turn, text="A->B->C", value=1, variable=var_turn_op)
     rd_op_rpy.pack(side='left')
 
-    rd_op_pyr = tk.Radiobutton(frm_turn, text="Yaw->Pitch->Roll", value=2, variable=var_turn_op)
+    rd_op_pyr = tk.Radiobutton(frm_turn, text="C->B->A", value=2, variable=var_turn_op)
     rd_op_pyr.pack(side='left')
 
     var_turn_op.set(1)
@@ -337,7 +486,7 @@ def create_circle(ax, x, y, z, z_dir, edge_col, fill_flag, line_width, line_styl
 def draw_static_diagrams():
     create_center_lines()
     create_circle(ax0, 0., 0., 0., "x", "gray", False, 0.5,
-                  "--", "Light-sphere")
+                  "--", "")
     create_circle(ax0, 0., 0., 0., "y", "gray", False, 0.5,
                   "--", "")
     create_circle(ax0, 0., 0., 0., "z", "gray", False, 0.5,
@@ -347,24 +496,37 @@ def draw_static_diagrams():
 def update_diagrams():
     # angle = np.deg2rad(cnt.get()) % (2. * np.pi)
     angle = np.deg2rad(1)
-    if var_turn_op.get() == 1:
-        # Roll->Pitch->Yaw
-        tri_arrow.roll(rot_velocity_roll * angle)
-        tri_arrow.pitch(rot_velocity_pitch * angle)
-        tri_arrow.yaw(rot_velocity_yaw * angle)
+    if var_axis_op.get() == 1:
+        if var_turn_op.get() == 1:
+            # Roll->Pitch->Yaw
+            three_arrow.roll(rot_velocity_a * angle)
+            three_arrow.pitch(rot_velocity_b * angle)
+            three_arrow.yaw(rot_velocity_c * angle)
+        else:
+            # Yaw->Pitch->Roll
+            three_arrow.yaw(rot_velocity_c * angle)
+            three_arrow.pitch(rot_velocity_b * angle)
+            three_arrow.roll(rot_velocity_a * angle)
     else:
-        # Yaw->Pitch->Roll
-        tri_arrow.yaw(rot_velocity_yaw * angle)
-        tri_arrow.pitch(rot_velocity_pitch * angle)
-        tri_arrow.roll(rot_velocity_roll * angle)
+        if var_turn_op.get() == 1:
+            # x->y->z
+            three_arrow.rot_x(rot_velocity_a * angle)
+            three_arrow.rot_y(rot_velocity_b * angle)
+            three_arrow.rot_z(rot_velocity_c * angle)
+        else:
+            # z->y->x
+            three_arrow.rot_z(rot_velocity_c * angle)
+            three_arrow.rot_y(rot_velocity_b * angle)
+            three_arrow.rot_x(rot_velocity_a * angle)
 
 
 def reset():
-    global is_play
+    global is_play, var_theta
     is_play = False
     cnt.reset()
-    tri_arrow.reset()
-    update_diagrams()
+    three_arrow.reset()
+    var_theta.set(str(theta_init_deg))
+    var_phi.set(str(phi_init_deg))
 
 
 def switch():
@@ -385,9 +547,9 @@ if __name__ == "__main__":
     create_animation_control()
     create_parameter_setter()
 
-    tri_arrow = TriArrow(ax0, np.array([0., 0., 0.]), 0.)
+    three_arrow = ThreeArrow(ax0, np.array([0., 0., 0.]), 0.)
 
-    # ax0.legend(loc='lower right', fontsize=8)
+    ax0.legend(loc='lower right', fontsize=8)
 
     anim = animation.FuncAnimation(fig, update, interval=100, save_count=100)
     root.mainloop()
