@@ -508,7 +508,7 @@ def update_diagrams():
             three_arrow.pitch(rot_velocity_b * angle)
             three_arrow.roll(rot_velocity_a * angle)
     else:
-        if var_turn_op.get() == 1:
+        if var_turn_op.get() == 2:
             # x->y->z
             three_arrow.rot_x(rot_velocity_a * angle)
             three_arrow.rot_y(rot_velocity_b * angle)
