@@ -168,8 +168,6 @@ class ThreeArrow:
         self.r_yaw_axis, self.theta_yaw_axis, self.phi_yaw_axis = cartesian_to_spherical(
             self.yaw_axis[0], self.yaw_axis[1], self.yaw_axis[2])
 
-        print("row", self.theta_roll_axis, self.phi_roll_axis)
-
     def roll(self, angle):
         self.roll_axis = self.roll_axis / np.linalg.norm(self.roll_axis)
         rot_matrix = Rotation.from_rotvec(angle * self.roll_axis)
@@ -499,22 +497,26 @@ def update_diagrams():
     if var_axis_op.get() == 1:
         if var_turn_op.get() == 1:
             # Roll->Pitch->Yaw
+            # print("Roll->Pitch->Yaw")
             three_arrow.roll(rot_velocity_a * angle)
             three_arrow.pitch(rot_velocity_b * angle)
             three_arrow.yaw(rot_velocity_c * angle)
         else:
             # Yaw->Pitch->Roll
+            # print("Yaw->Pitch->Roll")
             three_arrow.yaw(rot_velocity_c * angle)
             three_arrow.pitch(rot_velocity_b * angle)
             three_arrow.roll(rot_velocity_a * angle)
     else:
-        if var_turn_op.get() == 2:
+        if var_turn_op.get() == 1:
             # x->y->z
+            # print("x->y->z")
             three_arrow.rot_x(rot_velocity_a * angle)
             three_arrow.rot_y(rot_velocity_b * angle)
             three_arrow.rot_z(rot_velocity_c * angle)
         else:
             # z->y->x
+            # print("z->y->x")
             three_arrow.rot_z(rot_velocity_c * angle)
             three_arrow.rot_y(rot_velocity_b * angle)
             three_arrow.rot_x(rot_velocity_a * angle)
