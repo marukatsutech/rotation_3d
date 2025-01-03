@@ -340,6 +340,21 @@ class ThreeArrow:
 
         self._update_path()
 
+    def clear_path(self):
+        self.x_path_roll_axis = []
+        self.y_path_roll_axis = []
+        self.z_path_roll_axis = []
+
+        self.x_path_pitch_axis = []
+        self.y_path_pitch_axis = []
+        self.z_path_pitch_axis = []
+
+        self.x_path_yaw_axis = []
+        self.y_path_yaw_axis = []
+        self.z_path_yaw_axis = []
+
+        self._update_path()
+
 
 def create_center_lines():
     line_axis_x = art3d.Line3D([0., 0.], [0., 0.], [z_min, z_max], color="gray", ls="-.", linewidth=1)
@@ -357,6 +372,8 @@ def create_animation_control():
     btn_play.pack(side="left")
     btn_reset = tk.Button(frm_anim, text="Reset", command=reset)
     btn_reset.pack(side="left")
+    btn_clear = tk.Button(frm_anim, text="Clear path", command=lambda: three_arrow.clear_path())
+    btn_clear.pack(side="left")
 
 
 def set_v_roll(velocity):
@@ -380,6 +397,36 @@ def set_theta_initial(theta):
 
 def set_phi_initial(phi):
     three_arrow.set_phi_initial(np.deg2rad(phi))
+
+
+def set_roll_cw_initial():
+    three_arrow.roll(np.deg2rad(1))
+    three_arrow.clear_path()
+
+
+def set_roll_ccw_initial():
+    three_arrow.roll(np.deg2rad(-1))
+    three_arrow.clear_path()
+
+
+def set_pitch_up_initial():
+    three_arrow.pitch(np.deg2rad(-1))
+    three_arrow.clear_path()
+
+
+def set_pitch_down_initial():
+    three_arrow.pitch(np.deg2rad(1))
+    three_arrow.clear_path()
+
+
+def set_yaw_right_initial():
+    three_arrow.yaw(np.deg2rad(-1))
+    three_arrow.clear_path()
+
+
+def set_yaw_left_initial():
+    three_arrow.yaw(np.deg2rad(1))
+    three_arrow.clear_path()
 
 
 def create_parameter_setter():
@@ -409,15 +456,28 @@ def create_parameter_setter():
     )
     spn_phi.pack(side="left")
 
+    btn_roll_cw = tk.Button(frm_dir, text="Roll CW", command=set_roll_cw_initial)
+    btn_roll_cw.pack(side="left")
+    btn_roll_ccw = tk.Button(frm_dir, text="Roll CCW", command=set_roll_ccw_initial)
+    btn_roll_ccw.pack(side="left")
+    btn_roll_pitch_up = tk.Button(frm_dir, text="Pitch up", command=set_pitch_up_initial)
+    btn_roll_pitch_up.pack(side="left")
+    btn_roll_pitch_down = tk.Button(frm_dir, text="Pitch down", command=set_pitch_down_initial)
+    btn_roll_pitch_down.pack(side="left")
+    btn_roll_yaw_right = tk.Button(frm_dir, text="Yaw right", command=set_yaw_right_initial)
+    btn_roll_yaw_right.pack(side="left")
+    btn_roll_yaw_left = tk.Button(frm_dir, text="Yaw left", command=set_yaw_left_initial)
+    btn_roll_yaw_left.pack(side="left")
+
     frm_axis = ttk.Labelframe(root, relief="ridge", text="Rotation axis", labelanchor='n')
     frm_axis.pack(side='left', fill=tk.Y)
 
     # var_axis_op = tk.IntVar()
     rd_op_axis_rpy = tk.Radiobutton(frm_axis, text="Roll,Pitch,Yaw", value=1, variable=var_axis_op)
-    rd_op_axis_rpy.pack(side='left')
+    rd_op_axis_rpy.pack(anchor=tk.W)
 
     rd_op_axis_xyz = tk.Radiobutton(frm_axis, text="x,y,z", value=2, variable=var_axis_op)
-    rd_op_axis_xyz.pack(side='left')
+    rd_op_axis_xyz.pack(anchor=tk.W)
 
     var_axis_op.set(1)
 
@@ -462,10 +522,10 @@ def create_parameter_setter():
 
     # var_turn_op = tk.IntVar()
     rd_op_rpy = tk.Radiobutton(frm_turn, text="A->B->C", value=1, variable=var_turn_op)
-    rd_op_rpy.pack(side='left')
+    rd_op_rpy.pack(anchor=tk.W)
 
     rd_op_pyr = tk.Radiobutton(frm_turn, text="C->B->A", value=2, variable=var_turn_op)
-    rd_op_pyr.pack(side='left')
+    rd_op_pyr.pack(anchor=tk.W)
 
     var_turn_op.set(1)
 
