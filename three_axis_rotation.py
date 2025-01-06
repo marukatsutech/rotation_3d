@@ -490,7 +490,7 @@ def create_parameter_setter():
     var_vr = tk.StringVar(root)
     var_vr.set(str(rot_velocity_a))
     spn_vr = tk.Spinbox(
-        frm_v, textvariable=var_vr, format="%.0f", from_=-10, to=10, increment=1,
+        frm_v, textvariable=var_vr, format="%.0f", from_=-100, to=100, increment=1,
         command=lambda: set_v_roll(float(var_vr.get())), width=5
     )
     spn_vr.pack(side="left")
@@ -501,7 +501,7 @@ def create_parameter_setter():
     var_vp = tk.StringVar(root)
     var_vp.set(str(rot_velocity_b))
     spn_vp = tk.Spinbox(
-        frm_v, textvariable=var_vp, format="%.0f", from_=-10, to=10, increment=1,
+        frm_v, textvariable=var_vp, format="%.0f", from_=-100, to=100, increment=1,
         command=lambda: set_v_pitch(float(var_vp.get())), width=5
     )
     spn_vp.pack(side="left")
@@ -512,7 +512,7 @@ def create_parameter_setter():
     var_vy = tk.StringVar(root)
     var_vy.set(str(rot_velocity_c))
     spn_vy = tk.Spinbox(
-        frm_v, textvariable=var_vy, format="%.0f", from_=-10, to=10, increment=1,
+        frm_v, textvariable=var_vy, format="%.0f", from_=-100, to=100, increment=1,
         command=lambda: set_v_yaw(float(var_vy.get())), width=5
     )
     spn_vy.pack(side="left")
