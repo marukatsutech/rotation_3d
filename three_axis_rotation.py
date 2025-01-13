@@ -23,6 +23,7 @@ vector_z_axis = np.array([0., 0., 1.])
 """ Other parameters """
 theta_init_deg, phi_init_deg = 90., 0.
 rot_velocity_a, rot_velocity_b, rot_velocity_c = 1., 1., 1.
+is_apply_velocity = False
 
 """ Create figure and axes """
 title_ax0 = "Three-axis rotation"
@@ -61,7 +62,7 @@ var_axis_op = tk.IntVar()
 var_turn_op = tk.IntVar()
 var_theta = tk.StringVar(root)
 var_phi = tk.StringVar(root)
-
+var_apply_v = tk.IntVar(root)
 
 """ Classes and functions """
 
@@ -114,6 +115,7 @@ class ThreeArrow:
         self.ax = ax
         self.xyz = xyz
         self.direction = direction
+        self.normalize = True
         # self.size = size
         # self.color = color
 
@@ -125,17 +127,23 @@ class ThreeArrow:
         self.pitch_axis = np.array([0., 1., 0.])
         self.yaw_axis = np.array([0., 0., 1.])
 
+        self.resultant = self.roll_axis + self.pitch_axis + self.yaw_axis
+
         self.qvr_roll_axis = self.ax.quiver(self.xyz[0], self.xyz[1], self.xyz[2],
                                             self.roll_axis[0], self.roll_axis[1], self.roll_axis[2],
-                                            length=1, color="red", normalize=True)
+                                            length=1, color="red", normalize=self.normalize)
 
         self.qvr_pitch_axis = self.ax.quiver(self.xyz[0], self.xyz[1], self.xyz[2],
                                              self.pitch_axis[0], self.pitch_axis[1], self.pitch_axis[2],
-                                             length=1, color="blue", normalize=True)
+                                             length=1, color="blue", normalize=self.normalize)
 
         self.qvr_yaw_axis = self.ax.quiver(self.xyz[0], self.xyz[1], self.xyz[2],
                                            self.yaw_axis[0], self.yaw_axis[1], self.yaw_axis[2],
-                                           length=1, color="green", normalize=True)
+                                           length=1, color="green", normalize=self.normalize)
+
+        self.qvr_resultant_vector = self.ax.quiver(self.xyz[0], self.xyz[1], self.xyz[2],
+                                                   self.resultant[0], self.resultant[1], self.resultant[2],
+                                                   length=1, color="gray", normalize=False)
 
         self.x_path_roll_axis = []
         self.y_path_roll_axis = []
@@ -161,6 +169,14 @@ class ThreeArrow:
                                            np.array(self.z_path_yaw_axis),
                                            color="green", linewidth=1, label="Yaw axis")
 
+        self.x_resultant = []
+        self.y_resultant = []
+        self.z_resultant = []
+        self.path_resultant, = self.ax.plot(np.array(self.resultant),
+                                            np.array(self.resultant),
+                                            np.array(self.resultant),
+                                            color="gray", linewidth=1, label="Resultant vector")
+
         self.r_roll_axis, self.theta_roll_axis, self.phi_roll_axis = cartesian_to_spherical(
             self.roll_axis[0], self.roll_axis[1], self.roll_axis[2])
         self.r_pitch_axis, self.theta_pitch_axis, self.phi_pitch_axis = cartesian_to_spherical(
@@ -174,7 +190,7 @@ class ThreeArrow:
         self.pitch_axis = rot_matrix.apply(self.pitch_axis)
         self.yaw_axis = rot_matrix.apply(self.yaw_axis)
 
-        self._update_quiver()
+        self.update_quiver()
         self._update_path()
 
     def pitch(self, angle):
@@ -183,7 +199,7 @@ class ThreeArrow:
         self.roll_axis = rot_matrix.apply(self.roll_axis)
         self.yaw_axis = rot_matrix.apply(self.yaw_axis)
 
-        self._update_quiver()
+        self.update_quiver()
         self._update_path()
 
     def yaw(self, angle):
@@ -192,7 +208,7 @@ class ThreeArrow:
         self.roll_axis = rot_matrix.apply(self.roll_axis)
         self.pitch_axis = rot_matrix.apply(self.pitch_axis)
 
-        self._update_quiver()
+        self.update_quiver()
         self._update_path()
 
     def rot_x(self, angle):
@@ -201,7 +217,7 @@ class ThreeArrow:
         self.pitch_axis = rot_matrix.apply(self.pitch_axis)
         self.yaw_axis = rot_matrix.apply(self.yaw_axis)
 
-        self._update_quiver()
+        self.update_quiver()
         self._update_path()
 
     def rot_y(self, angle):
@@ -210,7 +226,7 @@ class ThreeArrow:
         self.pitch_axis = rot_matrix.apply(self.pitch_axis)
         self.yaw_axis = rot_matrix.apply(self.yaw_axis)
 
-        self._update_quiver()
+        self.update_quiver()
         self._update_path()
 
     def rot_z(self, angle):
@@ -219,7 +235,7 @@ class ThreeArrow:
         self.pitch_axis = rot_matrix.apply(self.pitch_axis)
         self.yaw_axis = rot_matrix.apply(self.yaw_axis)
 
-        self._update_quiver()
+        self.update_quiver()
         self._update_path()
 
     def reset(self):
@@ -247,44 +263,89 @@ class ThreeArrow:
         self.y_path_yaw_axis = []
         self.z_path_yaw_axis = []
 
-        self._update_quiver()
+        self.x_resultant = []
+        self.y_resultant = []
+        self.z_resultant = []
+
+        self.update_quiver()
         self._update_path()
 
-    def _update_quiver(self):
+    def update_quiver(self):
+        if self.normalize:
+            u_roll, v_roll, w_roll = self.roll_axis[0], self.roll_axis[1], self.roll_axis[2]
+            u_pitch, v_pitch, w_pitch = self.pitch_axis[0], self.pitch_axis[1], self.pitch_axis[2]
+            u_yaw, v_yaw, w_yaw = self.yaw_axis[0], self.yaw_axis[1], self.yaw_axis[2]
+        else:
+            u_roll, v_roll, w_roll = (self.roll_axis[0] * rot_velocity_a, self.roll_axis[1] * rot_velocity_a,
+                                      self.roll_axis[2] * rot_velocity_a)
+            u_pitch, v_pitch, w_pitch = (self.pitch_axis[0] * rot_velocity_b, self.pitch_axis[1] * rot_velocity_b,
+                                         self.pitch_axis[2] * rot_velocity_b)
+            u_yaw, v_yaw, w_yaw = (self.yaw_axis[0] * rot_velocity_c, self.yaw_axis[1] * rot_velocity_c,
+                                   self.yaw_axis[2] * rot_velocity_c)
+
         self.qvr_roll_axis.remove()
         self.qvr_roll_axis = self.ax.quiver(self.xyz[0], self.xyz[1], self.xyz[2],
-                                            self.roll_axis[0], self.roll_axis[1], self.roll_axis[2],
-                                            length=1, color="red", normalize=True)
+                                            u_roll, v_roll, w_roll,
+                                            length=1, color="red", normalize=self.normalize)
         self.qvr_pitch_axis.remove()
         self.qvr_pitch_axis = self.ax.quiver(self.xyz[0], self.xyz[1], self.xyz[2],
-                                             self.pitch_axis[0], self.pitch_axis[1], self.pitch_axis[2],
-                                             length=1, color="blue", normalize=True)
+                                             u_pitch, v_pitch, w_pitch,
+                                             length=1, color="blue", normalize=self.normalize)
         self.qvr_yaw_axis.remove()
         self.qvr_yaw_axis = self.ax.quiver(self.xyz[0], self.xyz[1], self.xyz[2],
-                                           self.yaw_axis[0], self.yaw_axis[1], self.yaw_axis[2],
-                                           length=1, color="green", normalize=True)
+                                           u_yaw, v_yaw, w_yaw,
+                                           length=1, color="green", normalize=self.normalize)
+        if self.normalize:
+            self.resultant = self.roll_axis + self.pitch_axis + self.yaw_axis
+        else:
+            self.resultant = (self.roll_axis * rot_velocity_a + self.pitch_axis * rot_velocity_b +
+                              self.yaw_axis * rot_velocity_c)
+
+        self.qvr_resultant_vector.remove()
+        self.qvr_resultant_vector = self.ax.quiver(self.xyz[0], self.xyz[1], self.xyz[2],
+                                                   self.resultant[0], self.resultant[1], self.resultant[2],
+                                                   length=1, color="gray", normalize=False)
 
     def _update_path(self):
-        self.x_path_roll_axis.append(self.roll_axis[0])
-        self.y_path_roll_axis.append(self.roll_axis[1])
-        self.z_path_roll_axis.append(self.roll_axis[2])
+        if self.normalize:
+            u_roll, v_roll, w_roll = self.roll_axis[0], self.roll_axis[1], self.roll_axis[2]
+            u_pitch, v_pitch, w_pitch = self.pitch_axis[0], self.pitch_axis[1], self.pitch_axis[2]
+            u_yaw, v_yaw, w_yaw = self.yaw_axis[0], self.yaw_axis[1], self.yaw_axis[2]
+        else:
+            u_roll, v_roll, w_roll = (self.roll_axis[0] * rot_velocity_a, self.roll_axis[1] * rot_velocity_a,
+                                      self.roll_axis[2] * rot_velocity_a)
+            u_pitch, v_pitch, w_pitch = (self.pitch_axis[0] * rot_velocity_b, self.pitch_axis[1] * rot_velocity_b,
+                                         self.pitch_axis[2] * rot_velocity_b)
+            u_yaw, v_yaw, w_yaw = (self.yaw_axis[0] * rot_velocity_c, self.yaw_axis[1] * rot_velocity_c,
+                                   self.yaw_axis[2] * rot_velocity_c)
+
+        self.x_path_roll_axis.append(u_roll)
+        self.y_path_roll_axis.append(v_roll)
+        self.z_path_roll_axis.append(w_roll)
         self.path_roll_axis.set_xdata(np.array(self.x_path_roll_axis))
         self.path_roll_axis.set_ydata(np.array(self.y_path_roll_axis))
         self.path_roll_axis.set_3d_properties(np.array(self.z_path_roll_axis))
 
-        self.x_path_pitch_axis.append(self.pitch_axis[0])
-        self.y_path_pitch_axis.append(self.pitch_axis[1])
-        self.z_path_pitch_axis.append(self.pitch_axis[2])
+        self.x_path_pitch_axis.append(u_pitch)
+        self.y_path_pitch_axis.append(v_pitch)
+        self.z_path_pitch_axis.append(w_pitch)
         self.path_pitch_axis.set_xdata(np.array(self.x_path_pitch_axis))
         self.path_pitch_axis.set_ydata(np.array(self.y_path_pitch_axis))
         self.path_pitch_axis.set_3d_properties(np.array(self.z_path_pitch_axis))
 
-        self.x_path_yaw_axis.append(self.yaw_axis[0])
-        self.y_path_yaw_axis.append(self.yaw_axis[1])
-        self.z_path_yaw_axis.append(self.yaw_axis[2])
+        self.x_path_yaw_axis.append(u_yaw)
+        self.y_path_yaw_axis.append(v_yaw)
+        self.z_path_yaw_axis.append(w_yaw)
         self.path_yaw_axis.set_xdata(np.array(self.x_path_yaw_axis))
         self.path_yaw_axis.set_ydata(np.array(self.y_path_yaw_axis))
         self.path_yaw_axis.set_3d_properties(np.array(self.z_path_yaw_axis))
+
+        self.x_resultant.append(self.resultant[0])
+        self.y_resultant.append(self.resultant[1])
+        self.z_resultant.append(self.resultant[2])
+        self.path_resultant.set_xdata(np.array(self.x_resultant))
+        self.path_resultant.set_ydata(np.array(self.y_resultant))
+        self.path_resultant.set_3d_properties(np.array(self.z_resultant))
 
     def set_theta_initial(self, theta):
         self.theta_roll_axis = theta
@@ -297,7 +358,7 @@ class ThreeArrow:
 
         self.pitch_axis = - np.cross(self.roll_axis, self.yaw_axis)
 
-        self._update_quiver()
+        self.update_quiver()
 
         self.x_path_roll_axis = []
         self.y_path_roll_axis = []
@@ -310,6 +371,10 @@ class ThreeArrow:
         self.x_path_yaw_axis = []
         self.y_path_yaw_axis = []
         self.z_path_yaw_axis = []
+
+        self.x_resultant = []
+        self.y_resultant = []
+        self.z_resultant = []
 
         self._update_path()
 
@@ -324,7 +389,7 @@ class ThreeArrow:
 
         self.pitch_axis = - np.cross(self.roll_axis, self.yaw_axis)
 
-        self._update_quiver()
+        self.update_quiver()
 
         self.x_path_roll_axis = []
         self.y_path_roll_axis = []
@@ -337,6 +402,10 @@ class ThreeArrow:
         self.x_path_yaw_axis = []
         self.y_path_yaw_axis = []
         self.z_path_yaw_axis = []
+
+        self.x_resultant = []
+        self.y_resultant = []
+        self.z_resultant = []
 
         self._update_path()
 
@@ -353,7 +422,14 @@ class ThreeArrow:
         self.y_path_yaw_axis = []
         self.z_path_yaw_axis = []
 
+        self.x_resultant = []
+        self.y_resultant = []
+        self.z_resultant = []
+
         self._update_path()
+
+    def set_normalize(self, value):
+        self.normalize = value
 
 
 def create_center_lines():
@@ -369,26 +445,29 @@ def create_animation_control():
     frm_anim = ttk.Labelframe(root, relief="ridge", text="Animation", labelanchor="n")
     frm_anim.pack(side="left", fill=tk.Y)
     btn_play = tk.Button(frm_anim, text="Play/Pause", command=switch)
-    btn_play.pack(side="left")
+    btn_play.pack(fill=tk.X)
     btn_reset = tk.Button(frm_anim, text="Reset", command=reset)
-    btn_reset.pack(side="left")
+    btn_reset.pack(fill=tk.X)
     btn_clear = tk.Button(frm_anim, text="Clear path", command=lambda: three_arrow.clear_path())
-    btn_clear.pack(side="left")
+    btn_clear.pack(fill=tk.X)
 
 
 def set_v_roll(velocity):
     global rot_velocity_a
     rot_velocity_a = velocity
+    three_arrow.update_quiver()
 
 
 def set_v_pitch(velocity):
     global rot_velocity_b
     rot_velocity_b = velocity
+    three_arrow.update_quiver()
 
 
 def set_v_yaw(velocity):
     global rot_velocity_c
     rot_velocity_c = velocity
+    three_arrow.update_quiver()
 
 
 def set_theta_initial(theta):
@@ -429,8 +508,15 @@ def set_yaw_left_initial():
     three_arrow.clear_path()
 
 
+def switch_apply_velocity():
+    global is_apply_velocity
+    is_apply_velocity = not is_apply_velocity
+    three_arrow.set_normalize(not is_apply_velocity)
+    three_arrow.update_quiver()
+
+
 def create_parameter_setter():
-    global var_axis_op, var_turn_op, var_theta, var_phi
+    global var_axis_op, var_turn_op, var_theta, var_phi, var_apply_v
     frm_dir = ttk.Labelframe(root, relief="ridge", text="Initial direction", labelanchor='n')
     frm_dir.pack(side='left', fill=tk.Y)
 
@@ -516,6 +602,14 @@ def create_parameter_setter():
         command=lambda: set_v_yaw(float(var_vy.get())), width=5
     )
     spn_vy.pack(side="left")
+
+    frm_as = ttk.Labelframe(root, relief="ridge", text="Axis arrow size", labelanchor='n')
+    frm_as.pack(side='left', fill=tk.Y)
+
+    # var_apply_v = tk.IntVar(root)
+    var_apply_v.set(is_apply_velocity)
+    chk_apply_v = tk.Checkbutton(frm_as, text="Apply velocity", variable=var_apply_v, command=switch_apply_velocity)
+    chk_apply_v.pack()
 
     frm_turn = ttk.Labelframe(root, relief="ridge", text="Turn of rotation", labelanchor='n')
     frm_turn.pack(side='left', fill=tk.Y)
