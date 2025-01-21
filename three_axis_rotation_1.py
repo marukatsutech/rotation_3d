@@ -169,7 +169,7 @@ class ThreeArrow:
         self.path_roll_axis, = self.ax.plot(np.array(self.x_path_roll_axis),
                                             np.array(self.y_path_roll_axis),
                                             np.array(self.z_path_roll_axis),
-                                            color="red", linewidth=1, label="Roll axis")
+                                            color="red", linewidth=1)
 
         self.x_path_pitch_axis = []
         self.y_path_pitch_axis = []
@@ -177,7 +177,7 @@ class ThreeArrow:
         self.path_pitch_axis, = self.ax.plot(np.array(self.x_path_pitch_axis),
                                              np.array(self.y_path_pitch_axis),
                                              np.array(self.z_path_pitch_axis),
-                                             color="blue", linewidth=1, label="Pitch axis")
+                                             color="blue", linewidth=1)
 
         self.x_path_yaw_axis = []
         self.y_path_yaw_axis = []
@@ -185,7 +185,7 @@ class ThreeArrow:
         self.path_yaw_axis, = self.ax.plot(np.array(self.x_path_yaw_axis),
                                            np.array(self.y_path_yaw_axis),
                                            np.array(self.z_path_yaw_axis),
-                                           color="green", linewidth=1, label="Yaw axis")
+                                           color="green", linewidth=1)
 
         self.x_resultant = []
         self.y_resultant = []
@@ -193,7 +193,7 @@ class ThreeArrow:
         self.path_resultant, = self.ax.plot(np.array(self.x_resultant),
                                             np.array(self.y_resultant),
                                             np.array(self.z_resultant),
-                                            color="black", linewidth=1, label="Resultant rotation vector")
+                                            color="black", linewidth=1)
 
         self.cube_p1 = np.array([1., 1., 1.])
         self.cube_p2 = np.array([-1., 1., 1.])
@@ -684,7 +684,7 @@ def create_parameter_setter():
     frm_v = ttk.Labelframe(root, relief="ridge", text="Rotation velocity", labelanchor='n')
     frm_v.pack(side='left', fill=tk.Y)
 
-    lbl_vr = tk.Label(frm_v, text="A(Roll,x) axis")
+    lbl_vr = tk.Label(frm_v, text="A(Roll,x)")
     lbl_vr.pack(side="left")
 
     var_vr = tk.StringVar(root)
@@ -695,7 +695,7 @@ def create_parameter_setter():
     )
     spn_vr.pack(side="left")
 
-    lbl_vp = tk.Label(frm_v, text="B(Pitch,y) axis")
+    lbl_vp = tk.Label(frm_v, text="B(Pitch,y)")
     lbl_vp.pack(side="left")
 
     var_vp = tk.StringVar(root)
@@ -706,7 +706,7 @@ def create_parameter_setter():
     )
     spn_vp.pack(side="left")
 
-    lbl_vy = tk.Label(frm_v, text="C(Yaw,z) axis")
+    lbl_vy = tk.Label(frm_v, text="C(Yaw,z)")
     lbl_vy.pack(side="left")
 
     var_vy = tk.StringVar(root)
@@ -807,6 +807,15 @@ if __name__ == "__main__":
     create_parameter_setter()
 
     three_arrow = ThreeArrow(ax0, np.array([0., 0., 0.]), 0.)
+
+    dummy1, = ax0.plot(np.array([0, 0]), np.array([0, 0]), np.array([0, 0]),
+                       color="red", linewidth=1, linestyle="-.", label="Rotation vector A")
+    dummy2, = ax0.plot(np.array([0, 0]), np.array([0, 0]), np.array([0, 0]),
+                       color="blue", linewidth=1, linestyle="-.", label="Rotation vector B")
+    dummy3, = ax0.plot(np.array([0, 0]), np.array([0, 0]), np.array([0, 0]),
+                       color="green", linewidth=1, linestyle="-.", label="Rotation vector C")
+    dummy0, = ax0.plot(np.array([0, 0]), np.array([0, 0]), np.array([0, 0]),
+                       color="black", linewidth=1, linestyle="-.", label="Resultant rotation vector")
 
     ax0.legend(loc='lower right', fontsize=8)
 
