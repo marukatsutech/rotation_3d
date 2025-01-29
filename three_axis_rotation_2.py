@@ -46,6 +46,8 @@ wave_a = 0.
 wave_b = 0.
 wave_c = 0.
 
+adjustment = 1. / np.pi
+
 """ Create figure and axes """
 title_ax0 = "Three-axis rotation"
 title_tk = title_ax0
@@ -852,7 +854,7 @@ def create_parameter_setter():
     var_wn_a = tk.StringVar(root)
     var_wn_a.set(str(wave_number_a))
     spn_wn_a = tk.Spinbox(
-        frm_wave_a, textvariable=var_wn_a, format="%.0f", from_=-10, to=10, increment=1,
+        frm_wave_a, textvariable=var_wn_a, format="%.1f", from_=-10, to=10, increment=.1,
         command=lambda: set_wave_number_a(float(var_wn_a.get())), width=5
     )
     spn_wn_a.pack()
@@ -870,7 +872,7 @@ def create_parameter_setter():
     var_wn_b = tk.StringVar(root)
     var_wn_b.set(str(wave_number_b))
     spn_wn_b = tk.Spinbox(
-        frm_wave_b, textvariable=var_wn_b, format="%.0f", from_=-10, to=10, increment=1,
+        frm_wave_b, textvariable=var_wn_b, format="%.1f", from_=-10, to=10, increment=.1,
         command=lambda: set_wave_number_b(float(var_wn_b.get())), width=5
     )
     spn_wn_b.pack()
@@ -888,7 +890,7 @@ def create_parameter_setter():
     var_wn_c = tk.StringVar(root)
     var_wn_c.set(str(wave_number_c))
     spn_wn_c = tk.Spinbox(
-        frm_wave_c, textvariable=var_wn_c, format="%.0f", from_=-10, to=10, increment=1,
+        frm_wave_c, textvariable=var_wn_c, format="%.1f", from_=-10, to=10, increment=.1,
         command=lambda: set_wave_number_c(float(var_wn_c.get())), width=5
     )
     spn_wn_c.pack()
@@ -970,11 +972,11 @@ def update_diagrams():
         wave_a, wave_b, wave_c = 1., 1., 1.
     else:
         angle_acc_deg = (angle_acc_deg + angle_step_deg)
-        print(angle_acc_deg % 360)
-        phase = (np.deg2rad(angle_acc_deg))
-        wave_a = np.cos(wave_number_a * phase + wave_phase_a)
-        wave_b = np.cos(wave_number_b * phase + wave_phase_b)
-        wave_c = np.cos(wave_number_c * phase + wave_phase_c)
+        # print(angle_acc_deg % 360)
+        phase = np.deg2rad(angle_acc_deg) * adjustment
+        wave_a = np.cos(wave_number_a * phase + np.deg2rad(wave_phase_a))
+        wave_b = np.cos(wave_number_b * phase + np.deg2rad(wave_phase_b))
+        wave_c = np.cos(wave_number_c * phase + np.deg2rad(wave_phase_c))
     if var_axis_op.get() == 1:
         if var_turn_op.get() == 1:
             # Roll->Pitch->Yaw
