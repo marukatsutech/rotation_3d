@@ -233,51 +233,51 @@ class ThreeArrow:
         self.line_1to2, = self.ax.plot(np.array([self.cube_p1[0], self.cube_p2[0]]),
                                        np.array([self.cube_p1[1], self.cube_p2[1]]),
                                        np.array([self.cube_p1[2], self.cube_p2[2]]),
-                                       color="black", linewidth=1, linestyle="--")
+                                       color="darkorange", linewidth=1, linestyle="--")
         self.line_2to3, = self.ax.plot(np.array([self.cube_p2[0], self.cube_p3[0]]),
                                        np.array([self.cube_p2[1], self.cube_p3[1]]),
                                        np.array([self.cube_p2[2], self.cube_p3[2]]),
-                                       color="black", linewidth=1, linestyle="--")
+                                       color="darkorange", linewidth=1, linestyle="--")
         self.line_3to4, = self.ax.plot(np.array([self.cube_p3[0], self.cube_p4[0]]),
                                        np.array([self.cube_p3[1], self.cube_p4[1]]),
                                        np.array([self.cube_p3[2], self.cube_p4[2]]),
-                                       color="black", linewidth=1, linestyle="--")
+                                       color="darkorange", linewidth=1, linestyle="--")
         self.line_4to1, = self.ax.plot(np.array([self.cube_p4[0], self.cube_p1[0]]),
                                        np.array([self.cube_p4[1], self.cube_p1[1]]),
                                        np.array([self.cube_p4[2], self.cube_p1[2]]),
-                                       color="black", linewidth=1, linestyle="--")
+                                       color="darkorange", linewidth=1, linestyle="--")
         self.line_5to6, = self.ax.plot(np.array([self.cube_p5[0], self.cube_p6[0]]),
                                        np.array([self.cube_p5[1], self.cube_p6[1]]),
                                        np.array([self.cube_p5[2], self.cube_p6[2]]),
-                                       color="black", linewidth=1, linestyle="--")
+                                       color="darkorange", linewidth=1, linestyle="--")
         self.line_6to7, = self.ax.plot(np.array([self.cube_p6[0], self.cube_p7[0]]),
                                        np.array([self.cube_p6[1], self.cube_p7[1]]),
                                        np.array([self.cube_p6[2], self.cube_p7[2]]),
-                                       color="black", linewidth=1, linestyle="--")
+                                       color="darkorange", linewidth=1, linestyle="--")
         self.line_7to8, = self.ax.plot(np.array([self.cube_p7[0], self.cube_p8[0]]),
                                        np.array([self.cube_p7[1], self.cube_p8[1]]),
                                        np.array([self.cube_p7[2], self.cube_p8[2]]),
-                                       color="black", linewidth=1, linestyle="--")
+                                       color="darkorange", linewidth=1, linestyle="--")
         self.line_8to5, = self.ax.plot(np.array([self.cube_p8[0], self.cube_p5[0]]),
                                        np.array([self.cube_p8[1], self.cube_p5[1]]),
                                        np.array([self.cube_p8[2], self.cube_p5[2]]),
-                                       color="black", linewidth=1, linestyle="--")
+                                       color="darkorange", linewidth=1, linestyle="--")
         self.line_1to5, = self.ax.plot(np.array([self.cube_p1[0], self.cube_p5[0]]),
                                        np.array([self.cube_p1[1], self.cube_p5[1]]),
                                        np.array([self.cube_p1[2], self.cube_p5[2]]),
-                                       color="black", linewidth=1, linestyle="--")
+                                       color="darkorange", linewidth=1, linestyle="--")
         self.line_2to6, = self.ax.plot(np.array([self.cube_p2[0], self.cube_p6[0]]),
                                        np.array([self.cube_p2[1], self.cube_p6[1]]),
                                        np.array([self.cube_p2[2], self.cube_p6[2]]),
-                                       color="black", linewidth=1, linestyle="--")
+                                       color="darkorange", linewidth=1, linestyle="--")
         self.line_3to7, = self.ax.plot(np.array([self.cube_p3[0], self.cube_p7[0]]),
                                        np.array([self.cube_p3[1], self.cube_p7[1]]),
                                        np.array([self.cube_p3[2], self.cube_p7[2]]),
-                                       color="black", linewidth=1, linestyle="--")
+                                       color="darkorange", linewidth=1, linestyle="--")
         self.line_4to8, = self.ax.plot(np.array([self.cube_p4[0], self.cube_p8[0]]),
                                        np.array([self.cube_p4[1], self.cube_p8[1]]),
                                        np.array([self.cube_p4[2], self.cube_p8[2]]),
-                                       color="black", linewidth=1, linestyle="--")
+                                       color="darkorange", linewidth=1, linestyle="--")
 
     def roll(self, angle):
         self.roll_axis = self.roll_axis / np.linalg.norm(self.roll_axis)
@@ -1039,7 +1039,7 @@ if __name__ == "__main__":
     dummy3, = ax0.plot(np.array([0, 0]), np.array([0, 0]), np.array([0, 0]),
                        color="green", linewidth=1, linestyle="-.", label="Rotation vector C")
     dummy0, = ax0.plot(np.array([0, 0]), np.array([0, 0]), np.array([0, 0]),
-                       color="black", linewidth=1, linestyle="-.", label="Resultant rotation vector")
+                       color="darkorange", linewidth=1, linestyle="-.", label="Resultant rotation vector")
 
     ax0.legend(loc='lower right', fontsize=8)
 
