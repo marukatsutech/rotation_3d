@@ -1039,7 +1039,7 @@ if __name__ == "__main__":
     dummy3, = ax0.plot(np.array([0, 0]), np.array([0, 0]), np.array([0, 0]),
                        color="green", linewidth=1, linestyle="-.", label="Rotation vector C")
     dummy0, = ax0.plot(np.array([0, 0]), np.array([0, 0]), np.array([0, 0]),
-                       color="darkorange", linewidth=1, linestyle="-.", label="Resultant rotation vector")
+                       color="black", linewidth=1, linestyle="-.", label="Resultant rotation vector")
 
     ax0.legend(loc='lower right', fontsize=8)
 
