@@ -21,7 +21,6 @@ vector_y_axis = np.array([0., 1., 0.])
 vector_z_axis = np.array([0., 0., 1.])
 
 """ Other parameters """
-theta_init_deg, phi_init_deg = 90., 0.
 rot_velocity_a, rot_velocity_b, rot_velocity_c = 1., 1., 1.
 is_normalized = True
 is_rot_roll_pitch_yaw = True
@@ -45,7 +44,7 @@ ax0.grid()
 ax0.set_title(title_ax0)
 ax0.set_xlabel("x")
 ax0.set_ylabel("y")
-ax0.set_zlabel("t")
+ax0.set_zlabel("z")
 ax0.set_xlim(x_min, x_max)
 ax0.set_ylim(y_min, y_max)
 ax0.set_zlim(z_min, z_max)
