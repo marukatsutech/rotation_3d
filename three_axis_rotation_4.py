@@ -639,7 +639,7 @@ def create_parameter_setter():
     frm_pitch.pack(side='left', fill=tk.Y)
     btn_roll_pitch_up = tk.Button(frm_pitch, text="CW", command=lambda: three_arrow.rotate_b_cw())
     btn_roll_pitch_up.pack(fill=tk.X)
-    btn_roll_pitch_down = tk.Button(frm_pitch, text="CCw", command=lambda: three_arrow.rotate_b_ccw())
+    btn_roll_pitch_down = tk.Button(frm_pitch, text="CCW", command=lambda: three_arrow.rotate_b_ccw())
     btn_roll_pitch_down.pack(fill=tk.X)
 
     frm_yaw = ttk.Labelframe(frm_dir, relief="ridge", text="C", labelanchor='n')
