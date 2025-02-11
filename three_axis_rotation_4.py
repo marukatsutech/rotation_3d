@@ -667,7 +667,7 @@ def create_parameter_setter():
     var_wn_a = tk.StringVar(root)
     var_wn_a.set(str(0))
     spn_wn_a = tk.Spinbox(
-        frm_wave_a, textvariable=var_wn_a, format="%.1f", from_=-10, to=10, increment=1,
+        frm_wave_a, textvariable=var_wn_a, format="%.1f", from_=-20, to=20, increment=1,
         command=lambda: rotation_velocity_controller.set_wave_number_a(float(var_wn_a.get())), width=5
     )
     spn_wn_a.pack()
@@ -694,7 +694,7 @@ def create_parameter_setter():
     var_wn_b = tk.StringVar(root)
     var_wn_b.set(str(0))
     spn_wn_b = tk.Spinbox(
-        frm_wave_b, textvariable=var_wn_b, format="%.1f", from_=-10, to=10, increment=1,
+        frm_wave_b, textvariable=var_wn_b, format="%.1f", from_=-20, to=20, increment=1,
         command=lambda: rotation_velocity_controller.set_wave_number_b(float(var_wn_b.get())), width=5
     )
     spn_wn_b.pack()
@@ -721,7 +721,7 @@ def create_parameter_setter():
     var_wn_c = tk.StringVar(root)
     var_wn_c.set(str(0))
     spn_wn_c = tk.Spinbox(
-        frm_wave_c, textvariable=var_wn_c, format="%.1f", from_=-10, to=10, increment=1,
+        frm_wave_c, textvariable=var_wn_c, format="%.1f", from_=-20, to=20, increment=1,
         command=lambda: rotation_velocity_controller.set_wave_number_c(float(var_wn_c.get())), width=5
     )
     spn_wn_c.pack()
