@@ -429,6 +429,12 @@ class ThreeArrow:
     def set_is_path_r(self, value):
         self.is_path_r_on = value
 
+    def set_is_adjust(self, value):
+        if value:
+            self.adjustment = np.pi
+        else:
+            self.adjustment = 1.
+
 
 class RotationVelocityController:
     def __init__(self, ax=None):
@@ -761,6 +767,15 @@ def create_parameter_setter():
                                 command=lambda: three_arrow.set_is_path_r(var_chk_path_r.get()))
     chk_path_r.pack(anchor=tk.W)
     var_chk_path_r.set(True)
+    # Adjustment
+    frm_adj = ttk.Labelframe(root, relief="ridge", text="Adjustment", labelanchor='n')
+    frm_adj.pack(side='left', fill=tk.Y)
+    var_chk_adj = tk.BooleanVar(root)
+    chk_adj = tk.Checkbutton(frm_adj, text="Resultant * PI", variable=var_chk_adj,
+                             command=lambda: three_arrow.set_is_adjust(var_chk_adj.get()))
+    chk_adj.pack(anchor=tk.W)
+    var_chk_adj.set(True)
+
 
 
 def create_animation_control():
