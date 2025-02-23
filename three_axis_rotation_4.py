@@ -777,7 +777,6 @@ def create_parameter_setter():
     var_chk_adj.set(True)
 
 
-
 def create_animation_control():
     frm_anim = ttk.Labelframe(root, relief="ridge", text="Animation", labelanchor="n")
     frm_anim.pack(side="left", fill=tk.Y)
