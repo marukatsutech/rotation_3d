@@ -70,6 +70,7 @@ canvas.get_tk_widget().pack()
 """ Global objects of Tkinter """
 var_axis_op = tk.IntVar()
 var_turn_op = tk.IntVar()
+var_tick_op = tk.IntVar()
 
 """ Classes and functions """
 
@@ -583,6 +584,10 @@ class RotationVelocityController:
         three_arrow.update_quiver()
 
 
+def set_ticks(value):
+    ax1.set_xticks(np.arange(0, 360, value))
+
+
 def set_phase_deg_step(value):
     global phase_deg_step
     phase_deg_step = value
@@ -775,6 +780,19 @@ def create_parameter_setter():
                              command=lambda: three_arrow.set_is_adjust(var_chk_adj.get()))
     chk_adj.pack(anchor=tk.W)
     var_chk_adj.set(True)
+    # Ticks
+    frm_tick = ttk.Labelframe(root, relief="ridge", text="Ticks", labelanchor='n')
+    frm_tick.pack(side='left', fill=tk.Y)
+    # var_tick_op = tk.IntVar()
+    rd_op_tick45 = tk.Radiobutton(frm_tick, text="45", value=1, variable=var_tick_op,
+                                  command=lambda: set_ticks(45))
+    rd_op_tick45.pack(anchor=tk.W)
+
+    rd_op_tick60 = tk.Radiobutton(frm_tick, text="60", value=2, variable=var_tick_op,
+                                  command=lambda: set_ticks(60))
+    rd_op_tick60.pack(anchor=tk.W)
+
+    var_tick_op.set(1)
 
 
 def create_animation_control():
