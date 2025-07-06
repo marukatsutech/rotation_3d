@@ -388,9 +388,9 @@ def update_diagrams():
         path_resultant.append_path(resultant_phase_vector.get_vector())
 
     if var_rot_resultant.get():
-        rotation_vector_a.rotate_all(np.deg2rad(phase_step_deg), resultant_vector)
-        rotation_vector_b.rotate_all(np.deg2rad(phase_step_deg), resultant_vector)
-        rotation_vector_c.rotate_all(np.deg2rad(phase_step_deg), resultant_vector)
+        rotation_vector_a.rotate_all(np.deg2rad(phase_step_deg) * np.sqrt(3.), resultant_vector)
+        rotation_vector_b.rotate_all(np.deg2rad(phase_step_deg) * np.sqrt(3.), resultant_vector)
+        rotation_vector_c.rotate_all(np.deg2rad(phase_step_deg) * np.sqrt(3.), resultant_vector)
 
 
 def reset():
