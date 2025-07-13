@@ -16,6 +16,10 @@ phase_init_a = 0.
 phase_init_b = 0.
 phase_init_c = 0.
 
+offset_phase_a = 0.
+offset_phase_b = 90.
+offset_phase_c = -90.
+
 """ Animation control """
 is_play = False
 is_rotation_by_resultant = False
@@ -306,7 +310,7 @@ def create_parameter_setter():
     var_phase_init_a.set(str(phase_init_a))
     spn_phase_init_a = tk.Spinbox(
         frm_phase_init, textvariable=var_phase_init_a, format="%.0f", from_=-360, to=360, increment=1,
-        command=lambda: rotation_vector_a.set_phase(np.deg2rad(float(var_phase_init_a.get()))), width=5
+        command=lambda: rotation_vector_a.set_phase(np.deg2rad(float(var_phase_init_a.get()) + offset_phase_a)), width=5
     )
     spn_phase_init_a.pack(side="left")
 
@@ -316,7 +320,7 @@ def create_parameter_setter():
     var_phase_init_b.set(str(phase_init_a))
     spn_phase_init_b = tk.Spinbox(
         frm_phase_init, textvariable=var_phase_init_b, format="%.0f", from_=-360, to=360, increment=1,
-        command=lambda: rotation_vector_b.set_phase(np.deg2rad(float(var_phase_init_b.get()))), width=5
+        command=lambda: rotation_vector_b.set_phase(np.deg2rad(float(var_phase_init_b.get()) + offset_phase_b)), width=5
     )
     spn_phase_init_b.pack(side="left")
 
@@ -326,7 +330,7 @@ def create_parameter_setter():
     var_phase_init_c.set(str(phase_init_a))
     spn_phase_init_c = tk.Spinbox(
         frm_phase_init, textvariable=var_phase_init_c, format="%.0f", from_=-360, to=360, increment=1,
-        command=lambda: rotation_vector_c.set_phase(np.deg2rad(float(var_phase_init_c.get()))), width=5
+        command=lambda: rotation_vector_c.set_phase(np.deg2rad(float(var_phase_init_c.get()) + offset_phase_c)), width=5
     )
     spn_phase_init_c.pack(side="left")
 
@@ -408,6 +412,11 @@ def reset():
     rotation_vector_b.set_phase(np.deg2rad(float(var_phase_init_b.get())))
     rotation_vector_c.set_phase(np.deg2rad(float(var_phase_init_c.get())))
 
+    # offset
+    rotation_vector_a.rotate_phase(np.deg2rad(0))
+    rotation_vector_b.rotate_phase(np.deg2rad(90))
+    rotation_vector_c.rotate_phase(np.deg2rad(-90))
+
     rotation_vector_a.update_diagrams()
     rotation_vector_b.update_diagrams()
     rotation_vector_c.update_diagrams()
@@ -454,6 +463,11 @@ if __name__ == "__main__":
                         rotation_vector_c.get_center_vector())
 
     resultant_vector_arrow = VectorArrow(ax0, resultant_vector, "black")
+
+    # offset
+    rotation_vector_a.rotate_phase(np.deg2rad(0))
+    rotation_vector_b.rotate_phase(np.deg2rad(90))
+    rotation_vector_c.rotate_phase(np.deg2rad(-90))
 
     # ax0.legend(loc='lower right', fontsize=8)
 
