@@ -16,6 +16,10 @@ phase_init_a = 0.
 phase_init_b = 0.
 phase_init_c = 0.
 
+offset_phase_a = 0.
+offset_phase_b = 90.
+offset_phase_c = -90.
+
 """ Animation control """
 is_play = False
 is_rotation_by_resultant = False
@@ -419,7 +423,7 @@ def create_parameter_setter():
     var_phase_init_a.set(str(phase_init_a))
     spn_phase_init_a = tk.Spinbox(
         frm_phase_init, textvariable=var_phase_init_a, format="%.0f", from_=-360, to=360, increment=1,
-        command=lambda: rotation_vector_a.set_phase(np.deg2rad(float(var_phase_init_a.get()))), width=5
+        command=lambda: rotation_vector_a.set_phase(np.deg2rad(float(var_phase_init_a.get()) + offset_phase_a)), width=5
     )
     spn_phase_init_a.pack(side="left")
 
@@ -429,7 +433,7 @@ def create_parameter_setter():
     var_phase_init_b.set(str(phase_init_a))
     spn_phase_init_b = tk.Spinbox(
         frm_phase_init, textvariable=var_phase_init_b, format="%.0f", from_=-360, to=360, increment=1,
-        command=lambda: rotation_vector_b.set_phase(np.deg2rad(float(var_phase_init_b.get()))), width=5
+        command=lambda: rotation_vector_b.set_phase(np.deg2rad(float(var_phase_init_b.get()) + offset_phase_b)), width=5
     )
     spn_phase_init_b.pack(side="left")
 
@@ -439,7 +443,7 @@ def create_parameter_setter():
     var_phase_init_c.set(str(phase_init_a))
     spn_phase_init_c = tk.Spinbox(
         frm_phase_init, textvariable=var_phase_init_c, format="%.0f", from_=-360, to=360, increment=1,
-        command=lambda: rotation_vector_c.set_phase(np.deg2rad(float(var_phase_init_c.get()))), width=5
+        command=lambda: rotation_vector_c.set_phase(np.deg2rad(float(var_phase_init_c.get()) + offset_phase_c)), width=5
     )
     spn_phase_init_c.pack(side="left")
 
@@ -536,6 +540,16 @@ def reset():
     rotation_vector_b.set_phase(np.deg2rad(float(var_phase_init_b.get())))
     rotation_vector_c.set_phase(np.deg2rad(float(var_phase_init_c.get())))
 
+    # Offset precession phase
+    rotation_vector_a.rotate_all(np.deg2rad(45), vector_z_axis)
+    rotation_vector_b.rotate_all(np.deg2rad(45), vector_x_axis)
+    rotation_vector_c.rotate_all(np.deg2rad(45), vector_y_axis)
+
+    # Offset phase
+    rotation_vector_a.rotate_phase(np.deg2rad(0))
+    rotation_vector_b.rotate_phase(np.deg2rad(90))
+    rotation_vector_c.rotate_phase(np.deg2rad(-90))
+
     rotation_vector_a.update_diagrams()
     rotation_vector_b.update_diagrams()
     rotation_vector_c.update_diagrams()
@@ -566,14 +580,19 @@ if __name__ == "__main__":
     precession_axes = ThreeArrow(ax0, np.sqrt(2.), "-.", 1)
 
     rotation_vector_a = RotationVector(ax0, "red")
-    rotation_vector_a.rotate_all(np.deg2rad(45), vector_z_axis)
+
     rotation_vector_b = RotationVector(ax0, "green")
     rotation_vector_b.rotate_all(np.deg2rad(90), vector_z_axis)
-    rotation_vector_b.rotate_all(np.deg2rad(45), vector_x_axis)
+
     rotation_vector_b.set_phase(np.deg2rad(0))
     rotation_vector_c = RotationVector(ax0, "blue")
-    rotation_vector_c.rotate_all(np.deg2rad(-90 + 45), vector_y_axis)
+    rotation_vector_c.rotate_all(np.deg2rad(-90), vector_y_axis)
     rotation_vector_c.set_phase(np.deg2rad(0))
+
+    # Offset precession phase
+    rotation_vector_a.rotate_all(np.deg2rad(45), vector_z_axis)
+    rotation_vector_b.rotate_all(np.deg2rad(45), vector_x_axis)
+    rotation_vector_c.rotate_all(np.deg2rad(45), vector_y_axis)
 
     resultant_phase_vector = LineVector(ax0, "black")
     resultant_phase = (rotation_vector_a.get_phase_vector() + rotation_vector_b.get_phase_vector() +
@@ -581,6 +600,11 @@ if __name__ == "__main__":
     resultant_phase_vector.set_vector(resultant_phase)
 
     path_resultant = Path(ax0, "black")
+
+    # offset phase
+    rotation_vector_a.rotate_phase(np.deg2rad(0))
+    rotation_vector_b.rotate_phase(np.deg2rad(90))
+    rotation_vector_c.rotate_phase(np.deg2rad(-90))
 
     # ax0.legend(loc='lower right', fontsize=8)
 
