@@ -20,6 +20,11 @@ offset_phase_a = 0.
 offset_phase_b = 90.
 offset_phase_c = -90.
 
+offset_precession_phase_a = 45.
+offset_precession_phase_b = 45.
+offset_precession_phase_c = 45.
+
+
 """ Animation control """
 is_play = False
 is_rotation_by_resultant = False
@@ -65,9 +70,15 @@ canvas.get_tk_widget().pack()
 """ Global objects of Tkinter """
 var_phase_step = tk.StringVar(root)
 var_path = tk.IntVar(root)
+
 var_phase_init_a = tk.StringVar(root)
 var_phase_init_b = tk.StringVar(root)
 var_phase_init_c = tk.StringVar(root)
+
+var_precession_phase_init_a = tk.StringVar(root)
+var_precession_phase_init_b = tk.StringVar(root)
+var_precession_phase_init_c = tk.StringVar(root)
+
 var_rot_resultant = tk.IntVar(root)
 var_rot_precession = tk.IntVar(root)
 
@@ -391,6 +402,26 @@ def set_is_rotation_by_precession(value):
     is_rotation_by_precession = value
 
 
+def set_precession_phase_a(angle):
+    rotation_vector_a.reset()
+    rotation_vector_a.rotate_all(np.deg2rad(offset_precession_phase_a), vector_z_axis)
+    rotation_vector_a.rotate_all(np.deg2rad(angle), vector_x_axis)
+
+
+def set_precession_phase_b(angle):
+    rotation_vector_b.reset()
+    rotation_vector_b.rotate_all(np.deg2rad(90), vector_z_axis)
+    rotation_vector_b.rotate_all(np.deg2rad(offset_precession_phase_b), vector_x_axis)
+    rotation_vector_b.rotate_all(np.deg2rad(angle), vector_y_axis)
+
+
+def set_precession_phase_c(angle):
+    rotation_vector_c.reset()
+    rotation_vector_c.rotate_all(np.deg2rad(-90), vector_y_axis)
+    rotation_vector_c.rotate_all(np.deg2rad(offset_precession_phase_c), vector_y_axis)
+    rotation_vector_c.rotate_all(np.deg2rad(angle), vector_z_axis)
+
+
 def create_parameter_setter():
     # phase_step
     frm_step = ttk.Labelframe(root, relief="ridge", text="Phase per step", labelanchor='n')
@@ -446,6 +477,40 @@ def create_parameter_setter():
         command=lambda: rotation_vector_c.set_phase(np.deg2rad(float(var_phase_init_c.get()) + offset_phase_c)), width=5
     )
     spn_phase_init_c.pack(side="left")
+
+    # Initial precession phases
+    frm_precession_phase_init = ttk.Labelframe(root, relief="ridge", text="Initial precession phases", labelanchor='n')
+    frm_precession_phase_init.pack(side="left", fill=tk.Y)
+
+    lbl_pa = tk.Label(frm_precession_phase_init, text="A")
+    lbl_pa.pack(side='left')
+    # var_precession_phase_init_a = tk.StringVar(root)
+    var_precession_phase_init_a.set(str(0))
+    spn_precession_phase_init_a = tk.Spinbox(
+        frm_precession_phase_init, textvariable=var_precession_phase_init_a, format="%.0f", from_=-360, to=360, increment=1,
+        command=lambda: set_precession_phase_a(float(var_precession_phase_init_a.get())), width=5
+    )
+    spn_precession_phase_init_a.pack(side="left")
+
+    lbl_pb = tk.Label(frm_precession_phase_init, text="B")
+    lbl_pb.pack(side='left')
+    # var_precession_phase_init_b = tk.StringVar(root)
+    var_precession_phase_init_b.set(str(0))
+    spn_precession_phase_init_b = tk.Spinbox(
+        frm_precession_phase_init, textvariable=var_precession_phase_init_b, format="%.0f", from_=-360, to=360, increment=1,
+        command=lambda: set_precession_phase_b(float(var_precession_phase_init_b.get())), width=5
+    )
+    spn_precession_phase_init_b.pack(side="left")
+
+    lbl_pc = tk.Label(frm_precession_phase_init, text="C")
+    lbl_pc.pack(side='left')
+    # var_precession_phase_init_c = tk.StringVar(root)
+    var_precession_phase_init_c.set(str(0))
+    spn_precession_phase_init_c = tk.Spinbox(
+        frm_precession_phase_init, textvariable=var_precession_phase_init_c, format="%.0f", from_=-360, to=360, increment=1,
+        command=lambda: set_precession_phase_c(float(var_precession_phase_init_c.get())), width=5
+    )
+    spn_precession_phase_init_c.pack(side="left")
 
     frm_precession = ttk.Labelframe(root, relief="ridge", text="Precession", labelanchor="n")
     frm_precession.pack(side='left', fill=tk.Y)
@@ -541,14 +606,14 @@ def reset():
     rotation_vector_c.set_phase(np.deg2rad(float(var_phase_init_c.get())))
 
     # Offset precession phase
-    rotation_vector_a.rotate_all(np.deg2rad(45), vector_z_axis)
-    rotation_vector_b.rotate_all(np.deg2rad(45), vector_x_axis)
-    rotation_vector_c.rotate_all(np.deg2rad(45), vector_y_axis)
+    rotation_vector_a.rotate_all(np.deg2rad(offset_precession_phase_a), vector_z_axis)
+    rotation_vector_b.rotate_all(np.deg2rad(offset_precession_phase_b), vector_x_axis)
+    rotation_vector_c.rotate_all(np.deg2rad(offset_precession_phase_c), vector_y_axis)
 
     # Offset phase
-    rotation_vector_a.rotate_phase(np.deg2rad(0))
-    rotation_vector_b.rotate_phase(np.deg2rad(90))
-    rotation_vector_c.rotate_phase(np.deg2rad(-90))
+    rotation_vector_a.rotate_phase(np.deg2rad(offset_phase_a))
+    rotation_vector_b.rotate_phase(np.deg2rad(offset_phase_b))
+    rotation_vector_c.rotate_phase(np.deg2rad(offset_phase_c))
 
     rotation_vector_a.update_diagrams()
     rotation_vector_b.update_diagrams()
