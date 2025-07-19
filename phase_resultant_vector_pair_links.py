@@ -716,9 +716,9 @@ if __name__ == "__main__":
     rotation_vector_c.set_phase(np.deg2rad(0))
 
     # Offset precession phase
-    rotation_vector_a.rotate_all(np.deg2rad(45), vector_z_axis)
-    rotation_vector_b.rotate_all(np.deg2rad(45), vector_x_axis)
-    rotation_vector_c.rotate_all(np.deg2rad(45), vector_y_axis)
+    rotation_vector_a.rotate_all(np.deg2rad(offset_precession_phase_a), vector_z_axis)
+    rotation_vector_b.rotate_all(np.deg2rad(offset_precession_phase_b), vector_x_axis)
+    rotation_vector_c.rotate_all(np.deg2rad(offset_precession_phase_c), vector_y_axis)
 
     resultant_phase_vector = LineVector(ax0, "black")
     resultant_phase = (rotation_vector_a.get_phase_vector() + rotation_vector_b.get_phase_vector() +
@@ -728,9 +728,9 @@ if __name__ == "__main__":
     path_resultant = Path(ax0, "black")
 
     # offset phase
-    rotation_vector_a.rotate_phase(np.deg2rad(0))
-    rotation_vector_b.rotate_phase(np.deg2rad(90))
-    rotation_vector_c.rotate_phase(np.deg2rad(-90))
+    rotation_vector_a.rotate_phase(np.deg2rad(offset_phase_a))
+    rotation_vector_b.rotate_phase(np.deg2rad(offset_phase_b))
+    rotation_vector_c.rotate_phase(np.deg2rad(offset_phase_c))
 
     # Links
     links = Links(ax0)
